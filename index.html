@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MEGA Tic-Tac-Toe</title>
+
+    <!-- Bootstrap -->
+    <link href="css/game.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <button class="btn" onclick="newGame('single')">New Game</button>
+                        </li>
+                        <li class="nav-item">
+                            <label for="timePerMove" class="nav-link">Time per move</label>
+                            <input id="timePerMove" type="number" class="form-control" placeholder="30" value="30" />
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <button class="dropbtn">Opponent</button>
+                                <div class="dropdown-content">
+                                    <a href="#">
+                                        <input id="opponent-computer" name="opponent" type="radio" value="Computer" checked/>
+                                        <label for="opponent-computer">Computer</label>
+                                    </a>
+                                    <a href="#">
+                                        <input id="opponent-human" name="opponent" type="radio" value="Human"/>
+                                        <label for="opponent-human">Human</label>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <button class="dropbtn">CPU Difficulty</button>
+                                <div class="dropdown-content">
+                                    <a href="#">
+                                        <input id="cpu-easy" name="cpuDifficulty" type="radio" value="easy" checked/>
+                                        <label for="cpu-easy">Easy <br/>(plays random available space)</label>
+                                    </a>
+                                    <a href="#">
+                                        <input id="cpu-hard" name="cpuDifficulty" type="radio" value="hard" />
+                                        <label for="cpu-hard">Hard <br/>(plays to win)</label>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>            
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Tic-Tac-Toe</h1>
+            </div>
+        </div>
+        <div class="row" id="gameStats">
+            <div class="col-4 text-center">
+                <div id="p1Container">
+                    <h3>Player 1</h3>
+                    <h4>Wins: <span id="p1WinCounter">0</span></h4>
+                    <h4>Move time remaining: <span id="p1MoveTimer"></span></h4>
+                </div>
+            </div>
+            <div class="col-4 text-center">
+                <h3>Time: <span id="gameTimeCounter">0.0</span></h3>
+            </div>
+            <div class="col-4 text-center">
+                <div id="p2Container">
+                    <h3>Player 2</h3>
+                    <h4>Wins: <span id="p2WinCounter">0</span></h4>
+                    <h4>Move time remaining: <span id="p2MoveTimer"></span></h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center">
+                    <span id="turnIndicator"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <div id="megaBoard">
+                    <div class="row m-2 p-2">
+                        <div class="col-4">
+                            <div class="mini-board" id="board_a1"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_b1"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_c1"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 p-2">
+                        <div class="col-4">
+                            <div class="mini-board" id="board_a2"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_b2"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_c2"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 p-2">
+                        <div class="col-4">
+                            <div class="mini-board" id="board_a3"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_b3"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mini-board" id="board_c3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="singleBoard">
+                    <div class="col-12">
+                        <table class="text-center">
+                            <tbody>
+                                <tr>
+                                    <td data-cell="1"></td>
+                                    <td data-cell="2"></td>
+                                    <td data-cell="3"></td>
+                                </tr>
+                                <tr>
+                                    <td data-cell="4"></td>
+                                    <td data-cell="5"></td>
+                                    <td data-cell="6"></td>
+                                </tr>
+                                <tr>
+                                    <td data-cell="7"></td>
+                                    <td data-cell="8"></td>
+                                    <td data-cell="9"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
+  </body>
+</html>
