@@ -2,19 +2,30 @@ console.log('start');
 const gameTimeCounter = document.getElementById('gameTimeCounter');
 let isBoardEnabled = false;
 let opponent;
+let timePerMove = 30;
+let p1MoveTimerEl = document.getElementById('p1MoveTimer');
+let p2MoveTimerEl = document.getElementById('p2MoveTimer');
+
+let turn = {
+    'turn': 0,
+    'xPlayed': false,
+    'oPlayed': false
+}
 
 let playerOne = {
     'isXPLayer' : false,
     'wins' : 0,
     'losses' : 0,
-    'ties' : 0
+    'ties' : 0,
+    'playTimer': 0
 }
 
 let playerTwo = {
     'isXPLayer' : false,
     'wins' : 0,
     'losses' : 0,
-    'ties' : 0
+    'ties' : 0,
+    'playTimer': 0
 }
 
 const miniboardArray = [
@@ -94,8 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('dom loaded');
 
     const singleBoardCells = document.querySelectorAll('#singleBoard td');
-    const megaBoardCells = document.querySelectorAll('#megaBoard td');
-    let turn = 0;
+    //const megaBoardCells = document.querySelectorAll('#megaBoard td'); come back to this later if there's time and interest
 
     singleBoardCells.forEach(cell => {
         cell.addEventListener('click', () => {
@@ -107,9 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isCellEmpty(cellNumber, 'single')) {
                     console.log('cell is empty');
                     // TODO whose turn is it, X or O? add if here to determine X or O
-                    let xOrO = xOrO();
+                    let writeXOrO = xOrO(turn);
                     
-                    document.querySelector(`#singleBoard td[data-cell="${cellNumber}"]`).innerHTML = xOrO;
+                    document.querySelector(`#singleBoard td[data-cell="${cellNumber}"]`).innerHTML = writeXOrO;
                     isGameWon(cellNumber, "single");
                 }
             } else {
@@ -128,33 +138,66 @@ function isCellEmpty(cell, singleOrMega) {
 
 function isGameWon(cell, singleOrMega, player) {
     if (singleOrMega == 'single') {
-        // TODO read cell, check contents of surrounding win condition cells
-        let winCell1 = false;
-        let winCell2 = false;
+        horizontalCounter = 0;
+        verticalCounter = 0;
+        crossCounter = 0;
+
         winningCellsMap[cell]['horizontal'].forEach(winCell => {
             console.log(winCell);
-            document.querySelector(`#${singleOrMega}Board td[data-cell="${winCell}"]`).innerHTML == ''
-
+            if (document.querySelector(`#${singleOrMega}Board td[data-cell="${winCell}"]`).innerHTML == '') {
+                // TODO interpret if player is x or o, if winning cells are same as this player, game is won
+                horizontalCounter++;
+            } 
+            
         });
+
+        winningCellsMap[cell]['vertical'].forEach(winCell => {
+            console.log(winCell);
+            if (document.querySelector(`#${singleOrMega}Board td[data-cell="${winCell}"]`).innerHTML == '') {
+                // TODO interpret if player is x or o, if winning cells are same as this player, game is won
+                verticalCounter++;
+            } 
+            
+        });
+
+        if (winningCellsMap[cell]['cross']) {
+            winningCellsMap[cell]['cross'].forEach(winCell => {
+                console.log(winCell);
+                if (document.querySelector(`#${singleOrMega}Board td[data-cell="${winCell}"]`).innerHTML == '') {
+                    // TODO interpret if player is x or o, if winning cells are same as this player, game is won
+                    crossCounter++;
+                } 
+                
+            });
+        }
 
         console.log(winningCellsMap[cell]['vertical']);
         console.log(winningCellsMap[cell]['cross']);
-        // TODO if game won, show winner content
-        storeStats(winner, turns);
+
+        if (horizontalCounter == 2 || verticalCounter == 2 || crossCounter == 2) {
+            // TODO show winner content
+            storeStats(player, turn['turn']);
+            return true; // game is won
+        }
     }
-    // TODO if game not won, advance turn
-    advanceTurn(turn++,);
+    // TODO if game not won, figure out if turn should be advanced or if it is next player's turn
+    advanceTurn(turn['turn']++, opponent, playerOne, playerTwo, timePerMove);
 }
 
-function newGame(singleOrMega, timePerMove = 60) {
+function newGame(singleOrMega = 'single') {
     // clear board
     document.querySelectorAll("#singleBoard td").forEach(function(td) {
         td.innerHTML = "";
     });
 
+    timePerMove = document.getElementById('timePerMove').value;
+
     // clear x o player assignment
     playerOne['isXPLayer'] = false;
     playerTwo['isXPLayer'] = false;
+
+    // clear turn
+    turn['turn'] = 0;
 
     let opponent = document.querySelector('input[name="opponent"]:checked').value;
     
@@ -163,13 +206,14 @@ function newGame(singleOrMega, timePerMove = 60) {
         let difficulty = document.querySelector('input[name="cpuDifficulty"]:checked').value;
     
         if (difficulty == 'easy') {
-
+            // TODO let the easy CPU take a few seconds before making first move
+            // TODO if opponent is CPU and they move first, make a random available move
         } else {
-            // difficulty is hard - cpu plays to win
+            // TODO if opponent is CPU and they move first, make the best opening move
         }
 
     } else {
-        // opponent is human 
+        // TODO opponent is human, the first move made goes to the X player
     }
 
     // randomize first player
@@ -177,23 +221,23 @@ function newGame(singleOrMega, timePerMove = 60) {
     console.log('randomInt: ',randomInt);
     randomInt % 2 === 0 ? playerOne['isXPLayer'] = true : playerTwo['isXPLayer'] = true;
 
-    advanceTurn(1, opponent, playerOne, playerTwo);
+    advanceTurn(1, opponent, playerOne, playerTwo, timePerMove);
+
     // show gameStats
     document.getElementById("gameStats").style.visibility = "visible";
     // show and start gameTimeCounter
     startGameTimer();
+    (playerOne['ixXPlayer']) ? startPlayerTimer('p1', timePerMove) : startPlayerTimer('p2', timePerMove);
     isBoardEnabled = true;
     // turnIndicator
 }
 
-function xOrO() {
-    // TODO is it first play of first turn?
-
-    // TODO who played last?
+function xOrO(turn) {
+    return (turn['xPlayed']) ? 'O' : 'X';
 }
 
 // TODO advance turn
-function advanceTurn(turn, opponent, playerOne, playerTwo) {
+function advanceTurn(turn, opponent, playerOne, playerTwo, timePerMove) {
     console.log('turn advanced');
     console.log(turn, timePerMove, opponent, playerOne, playerTwo);
     if (playerOne.isXPLayer) {
@@ -201,12 +245,15 @@ function advanceTurn(turn, opponent, playerOne, playerTwo) {
     } else {
         console.log('P2 plays first');
     }
+
+    turn['turn']++;
     // TODO display whose turn it is, update countdown timerPerMove to player whose turn it is
 }
 
 // TODO reset stats
 function clearStats() {
-
+    // TODO clear wins
+    // TODO clear moves made
 }
 
 // TODO store stats on end of game
@@ -239,4 +286,20 @@ function startGameTimer() {
     gameTimerInterval = setInterval(updateTimer, 100);
 }
 
+function startPlayerTimer(player, timePerMove) {
+
+    let timerToAdjust = document.getElementById(`${player}MoveTimer`);
+    timerToAdjust.textContent = timePerMove;
+
+    function updatePlayTimer() {
+        timePerMove -= 0.1;
+        //player['playTimer'].textContent = timePerMove.toFixed(1);
+        timerToAdjust.textContent = timePerMove.toFixed(1);
+    }
+    
+    // Start a new interval
+    playTimerInterval = setInterval(updatePlayTimer, 100);
+}
+
+// TODO track any currently running player timer and if it reaches zero - end game and assign other player the winner
 console.log('end');
