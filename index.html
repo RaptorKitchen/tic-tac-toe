@@ -4,21 +4,28 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MEGA Tic-Tac-Toe</title>
+    <title>Tic-Tac-Toe</title>
 
     <!-- Bootstrap -->
     <link href="css/game.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
+        <div id="confirmationDialog" style="display: none;">
+            <div>
+                <p>Restart game?</p>
+                <button id="confirmButton" onclick="newGame('single', false); dismissDialogue();">Confirm</button>
+                <button id="cancelButton" onclick="dismissDialogue();">Cancel</button>
+            </div>
+        </div>        
         <div class="row">
             <div class="col-12">
                 <nav class="navbar">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <button class="btn" onclick="newGame('single')">New Game</button>
+                            <button class="btn" onclick="newGame('single', false)" id="newGameButton">New Game</button>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item future-feature">
                             <label for="timePerMove" class="nav-link">Time per move</label>
                             <input id="timePerMove" type="number" class="form-control" placeholder="30" value="30" />
                         </li>
@@ -43,14 +50,17 @@
                                 <div class="dropdown-content">
                                     <a href="#">
                                         <input id="cpu-easy" name="cpuDifficulty" type="radio" value="easy" checked/>
-                                        <label for="cpu-easy">Easy <br/>(plays random available space)</label>
+                                        <label for="cpu-easy">Easy: <br/><center>(plays any space)</center></label>
                                     </a>
                                     <a href="#">
                                         <input id="cpu-hard" name="cpuDifficulty" type="radio" value="hard" />
-                                        <label for="cpu-hard">Hard <br/>(plays to win)</label>
+                                        <label for="cpu-hard">Hard: <br/><center>(plays to win)</center></label>
                                     </a>
                                 </div>
                             </div>
+                        </li>
+                        <li class="nav-item" style="display: none">
+                            <button style="visibility: hidden;" id="pauseButton" class="btn" onclick="pauseTimer()">Pause</button>
                         </li>
                     </ul>
                 </nav>
@@ -63,20 +73,23 @@
         </div>
         <div class="row" id="gameStats">
             <div class="col-4 text-center">
-                <div id="p1Container">
+                <div id="p1Container" class="playerStatContainer">
                     <h3>Player 1</h3>
+                    <h4><span id="p1Assignment"></span></h4>
                     <h4>Wins: <span id="p1WinCounter">0</span></h4>
-                    <h4>Move time remaining: <span id="p1MoveTimer"></span></h4>
+                    <h4 class="future-feature">Move time remaining: <span id="p1MoveTimer"></span></h4>
                 </div>
             </div>
             <div class="col-4 text-center">
+                <h3>Turn: <span id="playerTurnLabel"></span></h3>
                 <h3>Time: <span id="gameTimeCounter">0.0</span></h3>
             </div>
             <div class="col-4 text-center">
-                <div id="p2Container">
+                <div id="p2Container" class="playerStatContainer">
                     <h3>Player 2</h3>
+                    <h4><span id="p2Assignment"></span></h4>
                     <h4>Wins: <span id="p2WinCounter">0</span></h4>
-                    <h4>Move time remaining: <span id="p2MoveTimer"></span></h4>
+                    <h4 class="future-feature">Move time remaining: <span id="p2MoveTimer"></span></h4>
                 </div>
             </div>
         </div>
